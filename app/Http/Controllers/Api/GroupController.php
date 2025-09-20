@@ -9,53 +9,43 @@ use App\Services\BalanceCalculator;
 
 class GroupController extends Controller
 {
-    // GET /api/groups
+    // list all groups
     public function index()
     {
-        $groups = Group::query()
-            ->select('id', 'name', 'created_at')
-            ->withCount(['members', 'expenses'])
-            ->orderBy('id', 'desc')
+        return Group::select('id','name','created_at')
+            ->withCount(['members','expenses'])
+            ->orderByDesc('id')
             ->get();
-
-        return response()->json($groups);
     }
 
-    // POST /api/groups  { name }
+    // make a new group (just name)
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-        ]);
-
-        $group = Group::create($data);
-
-        return response()->json($group, 201);
+        $data = $request->validate(['name' => ['required','string','max:100']]);
+        return response()->json(Group::create($data), 201);
     }
 
-    // GET /api/groups/{group}
+    // show one group with members and last expenses
     public function show(Group $group)
     {
         $group->load([
             'members:id,group_id,name,created_at',
-            'expenses' => fn ($q) => $q->latest('spent_at')->latest()->limit(50),
+            'expenses' => fn($q) => $q->latest('spent_at')->latest()->limit(50),
             'expenses.payer:id,name',
         ]);
-
-        return response()->json($group);
+        return $group;
     }
 
-    // DELETE /api/groups/{group}
+    // delete a group (members and expenses go away too because of cascade)
     public function destroy(Group $group)
     {
         $group->delete();
         return response()->noContent();
     }
 
-    // GET /api/groups/{group}/balances
+    // compute balances for this group
     public function balances(Group $group, BalanceCalculator $calc)
     {
-        $result = $calc->calculate($group);
-        return response()->json($result);
+        return $calc->calculate($group);
     }
 }

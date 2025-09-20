@@ -11,13 +11,8 @@ class MemberController extends Controller
 {
     public function store(Request $request, Group $group)
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:80'],
-        ]);
-
-        $member = $group->members()->create($data);
-
-        return response()->json($member, 201);
+        $data = $request->validate(['name' => ['required','string','max:80']]);
+        return response()->json($group->members()->create($data), 201);
     }
 
     public function destroy(Member $member)
