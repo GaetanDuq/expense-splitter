@@ -1,10 +1,3 @@
-# Repo “About” (paste in GitHub → About)
-Tiny Laravel + Vue expense splitter. Create groups, add members & expenses (JPY), see equal-split balances + suggested settlements, and export JSON. Built to learn.
-
----
-
-# README.md
-
 ## Expense Splitter (Laravel + Vue)
 Tiny app to split group expenses **equally**. Backend: Laravel 11 + SQLite. Frontend: Vue 3 (Vite). 
 
