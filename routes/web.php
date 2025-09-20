@@ -2,6 +2,5 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Send everything EXCEPT /api/* to the Vue SPA
+Route::view('/{any?}', 'app')->where('any', '^(?!api).*$');
